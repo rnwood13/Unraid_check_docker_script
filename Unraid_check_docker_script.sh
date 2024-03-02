@@ -20,9 +20,15 @@ echo
 echo "---------------------------------------------------------------------------------"
 echo
 if [ "$remove_unconnected_volumes" == "yes"  ] ; then
-    echo "Removing unconnected docker volumes"
-    echo
-    docker volume prune -f
+  echo "Removing unconnected docker volumes"
+  echo
+  # Check if docker major version is 23 or greater to ensure we use the correct command
+  docker_version=`(docker --version | awk -F'[ ,]+' '{print $3}' | awk -F'.' '{print $1}')`
+  if [ "$docker_version" -ge 23 ] ; then
+      docker volume prune -f --all
+    else
+      docker volume prune -f
+    fi
   else
     echo "Not removing unconnected docker volumes (this can be set in script if you want to)"
   fi
